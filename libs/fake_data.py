@@ -11,7 +11,7 @@ fake = Faker()
 def get_table(database_name: str, table_name: str, glue = boto3.client('glue')) -> dict:
 
     '''
-        Return Metadata from a table on AWS Glue.
+        Retorna o metadado da API Glue. Funcionando localmente.
     '''
     response = {}
 
@@ -24,6 +24,10 @@ def get_table(database_name: str, table_name: str, glue = boto3.client('glue')) 
     return response
     
 def treatment_columns(response_table: dict):
+
+    '''
+        Usada em caso de retorno de API Glue.
+    '''
 
     return response_table['Table']['StorageDescriptor']['Columns']
 
@@ -99,6 +103,7 @@ def generate_mock_value(data_type):
 
 def generate_mock_data(schema, spark, num_rows=10):
     '''
+        Gera o dado fake com base em um numero de linhas, default 10 linhas. 
     '''
     mock_data = []
 
