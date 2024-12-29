@@ -1,15 +1,33 @@
 # Dados Mockados Para Desenvolvimento 
 
-## Pre-Requisitos 
+## Pré-Requisitos 
 
-- Instalação do Boto3
-- Instalação do Faker
-- 
+Modulo da AWS para retorno das tabelas usando API do Glue. 
+```sh 
+pip install boto3 
+```
 
-## Como executar
+Modulo python para geração de dados faker.
+```sh 
+pip install faker
+```
 
-## Gerando Informações a partir de uma Tabela Glue  
+## Como realizar a chamada do Faker
 
-- Verificar a questão dos dados em uma tabela Iceberg e 
+```python 
+## Importação do modulo no caso esta em um diretorio de libs 
+from libs import fake_data
 
-## Pegando 
+'''
+    Faça a chamada com base no fake_data para gerar um dataframe. 
+    
+    database : str - Database de Origem da Tabela 
+    table : str - Tabela de origem dos dados
+    spark : SparkSession - Sessao spark atual 
+'''
+
+spark = SparkSession.builder.appName("GlueCatalogIntegration").getOrCreate()
+
+df = fake_data.generate_dataframe(database, table, spark)
+
+``` 
