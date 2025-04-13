@@ -12,12 +12,16 @@ faker = Faker()
 # TO-DOs 
 
 # Numeros apenas negativos 
-# Numeros com 10 casas decimais 
-# Formatacao com zeros a direita 
+# Numeros com 2 casas decimais 
+# Formatacao com zeros a direita
+# 
 
 def generate_formatted_data(format_string, num_rows):
     pattern = re.compile(format_string)
-    return [faker.bothify(format_string) for _ in range(num_rows)]
+    if format_string == "####-##-##":
+        return [faker.date_between(start_date="-1y", end_date="today").strftime("%Y-%m-%d") for _ in range(num_rows)]
+    else:
+        return [faker.bothify(format_string) for _ in range(num_rows)]
 
 
 
@@ -37,6 +41,8 @@ def generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_ro
                 return [field_config["default"]] * num_rows
             elif "format" in field_config:
                 return generate_formatted_data(field_config["format"], num_rows)
+            elif "round" in field_config:
+                return 
 
         else:
             if field_type == "bigint":

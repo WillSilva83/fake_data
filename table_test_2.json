@@ -16,7 +16,13 @@
         }, 
 
         "descritivo3": {
-            "format": "##.##.####"
+            "format": "####-##-##"
+        },
+        "c_double": {
+            "round": 2
+        },
+        "c_float" : {
+            "is_negative_number" : "True"
         }
     }
 }
