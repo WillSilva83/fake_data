@@ -1,0 +1,15 @@
+{
+    "table1_test": {
+        "id": {
+            "is_sequencial": "True"
+        }, 
+        "descritivo1": {
+            "choise" : ["A", "B", "C"]
+        }, 
+        "descritivo2": {
+
+            "default": "default_value"
+
+        }
+    }
+}

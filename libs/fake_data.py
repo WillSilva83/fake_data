@@ -20,7 +20,6 @@ def get_table(database_name: str, table_name: str, glue = boto3.client('glue')) 
     except Exception as e: 
         print(f"Error returning table: {database_name}.{table_name}")
 
-    print(response)
     return response
     
 def treatment_columns(response_table: dict):
