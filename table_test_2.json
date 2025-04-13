@@ -5,23 +5,35 @@
         }, 
 
         "id_table_1": {
-            "choise": [1,3,7,13]
+            "is_numeric" : "True",
+            "type": "bigint",
+            "is_negative_number" : "True"
         }, 
 
         "descritivo1": {
             "format": "###.###.###-##"
         },
         "descritivo2": {
-            "format": "##.###.###/####-##"
+            "format": "########/####-##"
         }, 
-
         "descritivo3": {
+            "is_derived": "True",
+            "derived_field": "descritivo2", 
+            "derived_size": 8
+        },
+        
+        "descritivo4": {
             "format": "####-##-##"
         },
+
         "c_double": {
+            "is_numeric": "True",
+            "type": "double",
             "round": 2
         },
         "c_float" : {
+            "is_numeric": "True", 
+            "type": "float", 
             "is_negative_number" : "True"
         }
     }
