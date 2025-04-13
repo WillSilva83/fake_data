@@ -30,4 +30,8 @@ spark = SparkSession.builder.appName("GlueCatalogIntegration").getOrCreate()
 
 df = fake_data.generate_dataframe(database, table, spark)
 
-``` 
+```
+
+## Implementações - V2 
+
+Criar 
