@@ -8,12 +8,9 @@ faker = Faker()
 
 # TO-DOs 
 
-# 1 - Numeros apenas negativos - OK 
-# 2 - Numeros com 2 casas decimais - OK 
-# 3 - Formatacao com zeros a direita -  
-# 4 - Campos derivados de outros campos 
-# 5 - Ajustar para ler o JSON e converter os valores corretos 
-# 6 - Campos do tipo decimal 
+# 1 - Ajustar para ler o JSON e converter os valores corretos - NOK 
+# 2 - Campos do tipo decimal - A testar 
+# 3 - Código base para testar - main - a fazer 
 
 
 def generate_data_for_field(field_name: str, field_type: str, field_config, row, index: int):
@@ -70,6 +67,12 @@ def generate_data_for_field(field_name: str, field_type: str, field_config, row,
     
     elif field_type == "string":
         return f"random_{random.randint(1000, 9999)}"
+    
+    elif field_type in ["bigint", "long"]:
+        return random.randint(0, 10000)
+    elif field_type == "decimal":
+        return random.uniform(0, 1000)
+
     else:
         return None
 
@@ -114,10 +117,12 @@ def generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_ro
 
 
 
-file_mapping = "table1_test.json"
-table_name = "table1_test"
+#file_mapping = "table1_test.json"
+#table_name = "table1_test"
 #file_mapping = "table_test_2.json"
 #table_name = "table_test_2"
+file_mapping = "tabela_3.json"
+table_name = "tabela_3"
 
 database_name = "database_test"
 num_rows = 10 
