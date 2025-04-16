@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import random 
-import boto3
+
 from faker import Faker 
 from pyspark.sql.types import (
     StringType, LongType, IntegerType, FloatType, DoubleType, BooleanType, DateType, TimestampType, StructField, StructType
@@ -8,19 +8,6 @@ from pyspark.sql.types import (
 
 fake = Faker()
 
-def get_table(database_name: str, table_name: str, glue = boto3.client('glue')) -> dict:
-
-    '''
-        Retorna o metadado da API Glue. Funcionando localmente.
-    '''
-    response = {}
-
-    try:
-        response = glue.get_table(DatabaseName=database_name, Name=table_name)
-    except Exception as e: 
-        print(f"Error returning table: {database_name}.{table_name}")
-
-    return response
     
 def treatment_columns(response_table: dict):
 
