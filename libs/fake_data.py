@@ -9,13 +9,7 @@ from pyspark.sql.types import (
 fake = Faker()
 
     
-def treatment_columns(response_table: dict):
 
-    '''
-        Usada em caso de retorno de API Glue.
-    '''
-
-    return response_table['Table']['StorageDescriptor']['Columns']
 
 def map_glue_to_spark_type(glue_type):
     """

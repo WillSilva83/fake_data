@@ -3,17 +3,27 @@ import random
 from datetime import datetime
 import json 
 import boto3
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType, FloatType, BooleanType, DateType, TimestampType
 
 faker = Faker() 
 
 # TO-DOs 
 
-# 1 - Ajustar para ler o JSON e converter os valores corretos - NOK 
 # 2 - Campos do tipo decimal - A testar 
 # 3 - Código base para testar - main - a fazer 
 # 4 - Ajustar o decimal 
 # 5 - 
 
+def treatment_columns(response_table: dict):
+
+    '''
+        Usada em caso de retorno de API Glue.
+    '''
+
+    print(response_table)
+
+    return response_table['Table']['StorageDescriptor']['Columns']
 
 def get_table(database_name: str, table_name: str, glue = boto3.client('glue')) -> dict:
 
@@ -49,8 +59,8 @@ def generate_data_for_field(field_type: str, field_config, row, index: int):
     def generate_numeric(field_config, field_type):
         is_negative = field_config.get("is_negative_number", "False") == "True"
         
-        if field_type in ["double", "float", "decimal", "decimal(18,2)"]:
-            precision = int(field_config.get("round", 2))
+        if field_type in ["double", "float", "decimal"]:
+            precision = field_config.get("round", 2)
             base = random.uniform(-1000, -1) if is_negative else random.uniform(0, 1000)
             return round(base, precision)
         
@@ -83,12 +93,12 @@ def generate_data_for_field(field_type: str, field_config, row, index: int):
         else:
             return faker.bothify(field_config["format"])
     
-    elif field_config.get("is_numeric", "False") == "True" or field_type in ["bigint", "long", "int", "decimal(18,2)"]:
+    elif field_config.get("is_numeric", "False") == "True" or field_type in ["bigint", "long", "int", "decimal"]:
         return generate_numeric(field_config, field_config.get("type", field_type))
     
     elif field_config.get("is_derived", "False") == "True":
         derived_field = field_config["derived_field"]
-        derived_size = int(field_config.get("derived_size", 10))
+        derived_size = field_config.get("derived_size", 10)
         return str(row.get(derived_field, ""))[:derived_size]
 
 
@@ -111,13 +121,9 @@ def generate_data_for_field(field_type: str, field_config, row, index: int):
     else:
         return None
 
-def generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_rows):
+def generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_rows, spark:SparkSession):
     """ Gera um Dataframe com base no mapeamento """
-    from pyspark.sql import SparkSession
-    from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType, FloatType, BooleanType, DateType, TimestampType
-
-    spark = SparkSession.builder.appName("GenerateDataFrameFake").getOrCreate() 
-
+    
     field_types = {
         "bigint": LongType(),
         "string": StringType(),
@@ -126,7 +132,6 @@ def generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_ro
         "boolean": BooleanType(),
         "date": DateType(),
         "timestamp": TimestampType(),
-        "decimal(18,2)": DoubleType(),
         "int": LongType(),
         "long": LongType(),
         "decimal": DoubleType(),
@@ -140,10 +145,16 @@ def generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_ro
         row = {}
         for field in aws_table_fields:
             field_name = field['Name']
+            
             field_type = field['Type']
+
+            # caso tenha decimal com casas decimais
+            if 'decimal' in field_type:
+                field_type = 'decimal'
+
             field_config = config_table.get(field_name, {})
             row[field_name] = generate_data_for_field(
-                field_name, field_type, field_config, row, i
+                field_type, field_config, row, i
             )
         rows.append(row)
 
