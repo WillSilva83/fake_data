@@ -8,12 +8,7 @@ from pyspark.sql.types import StructType, StructField, StringType, LongType, Dou
 
 faker = Faker() 
 
-# TO-DOs 
 
-# 2 - Campos do tipo decimal - A testar 
-# 3 - Código base para testar - main - a fazer 
-# 4 - Ajustar o decimal 
-# 5 - 
 
 def treatment_columns(response_table: dict):
 
@@ -21,9 +16,13 @@ def treatment_columns(response_table: dict):
         Usada em caso de retorno de API Glue.
     '''
 
-    print(response_table)
+    response = response_table['Table']['StorageDescriptor']['Columns']
 
-    return response_table['Table']['StorageDescriptor']['Columns']
+    for column in response:
+        if column['Type'].startswith('decimal('):
+            column['Type'] = 'decimal'
+
+    return response
 
 def get_table(database_name: str, table_name: str, glue = boto3.client('glue')) -> dict:
 
@@ -150,7 +149,7 @@ def generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_ro
 
             # caso tenha decimal com casas decimais
             if 'decimal' in field_type:
-                field_type = 'decimal'
+               field_type = 'decimal'
 
             field_config = config_table.get(field_name, {})
             row[field_name] = generate_data_for_field(
