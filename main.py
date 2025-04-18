@@ -5,12 +5,10 @@ from datetime import datetime, timedelta
 
 # TO-DOs 
 
-# 1 - Verificar se a tabela é iceberg automaticamente   - OK 
-# 2 - Adicionar o process_date                          -  
-# 3 - Coluna de Partição, é possível identificar? 
-# 4 - Overwrite partions 
-# 5 - Se não houver o arquivo deve gerar full aleatório 
-
+# 1 - Coluna de Partição, é possível identificar? 
+# 2 - Adicionar logging 
+# 3 - Validacao se a tabela existe 
+# 4 - 
 
 
 
