@@ -13,8 +13,13 @@ pip install faker
 ```
 
 # Como Executar 
-``` 
-spark-submit main.py <nome_da_tabela> <nome_do_database>  <overwrite_da_particao>
+```
+spark-submit main.py <nome_da_tabela> <nome_do_database> <overwrite_da_particao>
+```
+
+## Todos os parametros 
+```
+spark-submit main.py <nome_da_tabela> <nome_do_database> <overwrite_da_particao> <numero_de_linhas> <arquivo_json_de_configuracao> <data_de_processamento>
 ```
 
 # Documentação das Configurações de Campos
