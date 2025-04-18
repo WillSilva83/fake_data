@@ -5,12 +5,17 @@ from datetime import datetime, timedelta
 
 # TO-DOs 
 
-# 1 - Coluna de Partição, é possível identificar? 
-# 2 - Adicionar logging 
-# 3 - Validacao se a tabela existe 
-# 4 - 
+# 1 - Adicionar logging 
+# 2 - Validacao se a tabela existe 
+# 3 - Tipos de Dados complexos map, array, struct
 
+def return_partition_by(response_table: dict) -> str: 
+    partition_keys = response_table['Table'].get('PartitionKeys', [])
 
+    if not partition_keys:
+        return ""
+    
+    return partition_keys[0].get('Name', "")
 
 def is_iceberg_table(response_table: dict) -> bool:
     param = response_table['Table'].get('Parameters', {})
@@ -19,18 +24,15 @@ def is_iceberg_table(response_table: dict) -> bool:
     return table_type == 'ICEBERG'
 
 def main(table_name: str, database_name: str, config_file : str, num_rows: str, spark:SparkSession):
-    
-    
-    num_rows = int(num_rows)
-    # Recuperações necessarias
+
     config = {} 
     if config_file is not None: 
-        config = fd.read_mapping_json(config_file)
+        config = fd.read_mapping_json(config_file) # Adicionar a logica para retornar vazio.  
     
-    table_metadata = fd.get_table(database_name, table_name)
-    
-    aws_table_fields = fd.treatment_columns(table_metadata)
-    iceberg_table = is_iceberg_table(table_metadata)
+    response_table = fd.get_table(database_name, table_name)
+    aws_table_fields = fd.treatment_columns(response_table)
+    iceberg_table = is_iceberg_table(response_table)
+    partition_by = return_partition_by(response_table)
   
     try:
         print("Inicio do processo de FakeData")
@@ -56,9 +58,8 @@ if __name__ == "__main__":
     database_name = sys.argv[2]       # Obrigatorio
     overwrite_partition = sys.argv[3] # Obrigatorio
 
-    partition_by = ""
     config_file = sys.argv[4]  if len(sys.argv) > 4 else None            # Opcional 
-    num_rows = sys.argv[5]     if len(sys.argv) > 5 else 10              # Opcional
+    num_rows = int(sys.argv[5])     if len(sys.argv) > 5 else 10         # Opcional
     process_date = sys.argv[6] if len(sys.argv) > 6 else dia_anterior    # Opcional
 
    
