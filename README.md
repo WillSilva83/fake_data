@@ -12,6 +12,11 @@ Modulo python para geração de dados faker.
 pip install faker
 ```
 
+# Como Executar 
+``` 
+spark-submit main.py <nome_da_tabela> <nome_do_database>  <overwrite_da_particao>
+```
+
 # Documentação das Configurações de Campos
 
 As configurações especificam como os valores dos campos são gerados, formatados ou derivados de outros campos.

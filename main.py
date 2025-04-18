@@ -15,18 +15,25 @@ from datetime import datetime, timedelta
 
 
 def is_iceberg_table(response_table: dict) -> bool:
-    return response_table['Table']['Parameters']['table_type'] == 'ICEBERG'
+    param = response_table['Table'].get('Parameters', {})
+    table_type = param.get('table_type', "NO_ICEBERG")
+  
+    return table_type == 'ICEBERG'
 
 def main(table_name: str, database_name: str, config_file : str, num_rows: str, spark:SparkSession):
     
     
     num_rows = int(num_rows)
-    # Recuperações necessarias 
-    config = fd.read_mapping_json(config_file)
+    # Recuperações necessarias
+    config = {} 
+    if config_file is not None: 
+        config = fd.read_mapping_json(config_file)
+    
     table_metadata = fd.get_table(database_name, table_name)
+    
     aws_table_fields = fd.treatment_columns(table_metadata)
     iceberg_table = is_iceberg_table(table_metadata)
-    
+  
     try:
         print("Inicio do processo de FakeData")
         df = fd.generate_dataframe_with_mapping(aws_table_fields, config, table_name, num_rows, spark)
@@ -43,16 +50,17 @@ def main(table_name: str, database_name: str, config_file : str, num_rows: str, 
 if __name__ == "__main__":
 
     spark = SparkSession.builder.appName("FakeData").getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
 
     dia_anterior = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
     ## Recuperar variaveis pelo ambiente 
-    table_name = sys.argv[1]        # Obrigatorio 
-    database_name = sys.argv[2]     # Obrigatorio
-    partition_by = ""
+    table_name = sys.argv[1]          # Obrigatorio 
+    database_name = sys.argv[2]       # Obrigatorio
     overwrite_partition = sys.argv[3] # Obrigatorio
 
-    config_file = sys.argv[4] if len(sys.argv) > 4 else None            # Opcional 
-    num_rows = sys.argv[5] if len(sys.argv) > 5    else 10              # Opcional
+    partition_by = ""
+    config_file = sys.argv[4]  if len(sys.argv) > 4 else None            # Opcional 
+    num_rows = sys.argv[5]     if len(sys.argv) > 5 else 10              # Opcional
     process_date = sys.argv[6] if len(sys.argv) > 6 else dia_anterior    # Opcional
 
    
