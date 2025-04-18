@@ -55,6 +55,9 @@ def read_mapping_json(file_path : str) -> dict:
 def generate_data_for_field(field_type: str, field_config, row, index: int):
     """ Gera os dados com base na configuração do campo"""
 
+    numeric_datatypes = ["bigint", "long", "int", "decimal", "float", "double", "tinyint", "smallint"]
+    
+
     def generate_numeric(field_config, field_type):
         is_negative = field_config.get("is_negative_number", "False") == "True"
         
@@ -92,7 +95,7 @@ def generate_data_for_field(field_type: str, field_config, row, index: int):
         else:
             return faker.bothify(field_config["format"])
     
-    elif field_config.get("is_numeric", "False") == "True" or field_type in ["bigint", "long", "int", "decimal"]:
+    elif field_config.get("is_numeric", "False") == "True" or field_type in numeric_datatypes:
         return generate_numeric(field_config, field_config.get("type", field_type))
     
     elif field_config.get("is_derived", "False") == "True":
